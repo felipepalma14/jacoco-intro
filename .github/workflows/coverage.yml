@@ -35,7 +35,7 @@ jobs:
 
       - name: Jacoco Report to PR
         id: jacoco
-        uses: madrapps/jacoco-report@more-events
+        uses: Madrapps/jacoco-report@v1.7.2
         with:
           paths: |
             ${{ github.workspace }}/**/build/reports/jacoco/**/**.xml,

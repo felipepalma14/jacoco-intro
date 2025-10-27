@@ -13,9 +13,6 @@ on:
       - developer
       - master
       - main
-  schedule:
-    - cron: '*/5 * * * *'  # Runs every 5 minutes
-  workflow_dispatch:
 
 jobs:
   build:
@@ -33,25 +30,37 @@ jobs:
       - name: Run Module Coverage
         run: ./gradlew jacocoDebugReport
 
+      - name: Upload Report
+        uses: 'actions/upload-artifact@v2'
+        with:
+          name: report.xml
+          path: ${{ github.workspace }}/build/reports/jacoco/jacocoDebugReport/jacocoDebugReport.xml
+
+
       - name: Jacoco Report to PR
         id: jacoco
-        uses: Madrapps/jacoco-report@v1.7.2
+        uses: madrapps/jacoco-report@v1.7.2
         with:
-          paths: |
-            ${{ github.workspace }}/**/build/reports/jacoco/**/**.xml,
-            ${{ github.workspace }}/**/build/reports/jacoco/**/**.xml
+          paths: ${{ github.workspace }}/build/reports/jacoco/jacocoDebugReport/jacocoDebugReport.xml,
           token: ${{ secrets.GITHUB_TOKEN }}
-          min-coverage-overall: 45
-          min-coverage-changed-files: 84
-          title: '# :lobster: `Coverage Report`'
+          min-coverage-overall: 80
+          min-coverage-changed-files: 60
+          title: Code Coverage
           update-comment: true
           comment-type: 'both'
           pass-emoji: ':green_circle:'
           fail-emoji: ':red_circle:'
-          continue-on-error: true
+          continue-on-error: false
           debug-mode: true
 
       - name: Get the Coverage info
         run: |
           echo "Total coverage ${{ steps.jacoco.outputs.coverage-overall }}"
           echo "Changed Files coverage ${{ steps.jacoco.outputs.coverage-changed-files }}"
+
+      - name: Fail PR if overall coverage is less than 80%
+        if: ${{ steps.jacoco.outputs.coverage-overall < 80.0 }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+            core.setFailed('Overall coverage is less than 80%!')

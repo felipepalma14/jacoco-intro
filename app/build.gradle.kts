@@ -2,9 +2,19 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("jacoco")
 }
 
 android {
+    testOptions {
+        packaging {
+            resources.excludes.add("META-INF/*")
+        }
+        animationsDisabled = true
+        unitTests.isIncludeAndroidResources = true
+        unitTests.isReturnDefaultValues = true
+    }
+
     namespace = "com.felipepalma14.jacocointro"
     compileSdk {
         version = release(36)
@@ -27,6 +37,12 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+
+        debug {
+            applicationIdSuffix = ".debug"
+            isMinifyEnabled =  false
+            enableUnitTestCoverage = true
         }
     }
     compileOptions {

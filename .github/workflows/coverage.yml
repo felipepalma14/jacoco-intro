@@ -34,20 +34,21 @@ jobs:
       - name: Run Module Coverage
         run: ./gradlew jacocoDebugReport
 
-#      - name: Upload Report
-#        uses: 'actions/upload-artifact@v4'
-#        with:
-#          name: report.xml
-#          path: ${{ github.workspace }}/build/reports/jacoco/jacocoDebugReport/jacocoDebugReport.xml
+      - name: Upload Report
+        uses: 'actions/upload-artifact@v4'
+        with:
+          name: report.xml
+          path: ${{ github.workspace }}/app/build/reports/jacoco/jacocoDebugReport/jacocoDebugReport.xml
 
       - name: Jacoco Report to PR
         id: jacoco
         uses: madrapps/jacoco-report@v1.7.2
         with:
-          paths: ${{ github.workspace }}/build/reports/jacoco/jacocoDebugReport/jacocoDebugReport.xml,
+          paths: ${{ github.workspace }}/app/build/reports/jacoco/jacocoDebugReport/jacocoDebugReport.xml
           token: ${{ secrets.GITHUB_TOKEN }}
           min-coverage-overall: 80
           min-coverage-changed-files: 60
+          debug-mode: false
           title: Code Coverage
           update-comment: true
 

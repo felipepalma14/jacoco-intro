@@ -6,4 +6,8 @@ class FakeRepositoryImpl : IRepository {
     override fun getData(): String {
         return "Fake Data"
     }
+
+    override fun getAnother(): String {
+        return "Another Fake Data"
+    }
 }

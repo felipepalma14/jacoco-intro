@@ -49,7 +49,7 @@ jobs:
           min-coverage-overall: 80
           min-coverage-changed-files: 60
           title: Code Coverage
-          debug-mode: true
+          update-comment: true
 
       - name: Get the Coverage info
         run: |

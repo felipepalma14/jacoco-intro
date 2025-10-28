@@ -47,6 +47,8 @@ subprojects {
                     val flavorNameUpper = flavor?.name?.replaceFirstChar { it.uppercase() } ?: ""
                     val testTaskName = "test${flavorNameUpper}${variantNameUpper}UnitTest"
                     val jacocoReportTaskName = "jacoco${flavorNameUpper}${variantNameUpper}Report"
+                    val jacocoCoverageReportTaskName = "jacoco${flavorNameUpper}${variantNameUpper}CoverageReport"
+
 
                     // The directory name where AGP generates the .exec file
                     val testCoverageDir = if (flavor?.name?.isNotBlank() == true) {
@@ -89,6 +91,8 @@ subprojects {
                             "Generate Jacoco coverage reports for the ${flavor?.name ?: ""} ${buildType.name} variant."
 
                         dependsOn(testTaskName)
+
+                        finalizedBy(tasks.named(jacocoCoverageReportTaskName).get())
                         jacocoClasspath = configurations.getByName("jacocoAnt")
 
                         // CRITICAL: Path to your compiled Kotlin/Java classes.
@@ -120,6 +124,25 @@ subprojects {
                             xml.required.set(true)
                             html.required.set(true)
                             html.outputLocation.set(layout.buildDirectory.dir("reports/jacoco/html/$testCoverageDir"))
+                        }
+                    }
+
+                    tasks.register<JacocoCoverageVerification>(jacocoCoverageReportTaskName) {
+                        // classDirectories e executionData devem ser os mesmos do generateJacocoCoverageReport
+                        val reportTask = tasks.named<JacocoReport>(jacocoReportTaskName).get()
+
+                        classDirectories.setFrom(reportTask.classDirectories)
+                        executionData.setFrom(reportTask.executionData)
+
+                        violationRules {
+                            rule {
+                                limit {
+                                    counter = "LINE"
+                                    value = "COVEREDRATIO"
+                                    // mínimo de 80% de cobertura
+                                    minimum = "0.8".toBigDecimal()
+                                }
+                            }
                         }
                     }
                 }

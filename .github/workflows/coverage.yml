@@ -18,9 +18,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
+      checks: write
       pull-requests: write
-      repository-projects: write
     steps:
       - uses: actions/checkout@v2
       - name: Set up JDK 17
@@ -34,12 +34,11 @@ jobs:
       - name: Run Module Coverage
         run: ./gradlew jacocoDebugReport
 
-      - name: Upload Report
-        uses: 'actions/upload-artifact@v4'
-        with:
-          name: report.xml
-          path: ${{ github.workspace }}/build/reports/jacoco/jacocoDebugReport/jacocoDebugReport.xml
-
+#      - name: Upload Report
+#        uses: 'actions/upload-artifact@v4'
+#        with:
+#          name: report.xml
+#          path: ${{ github.workspace }}/build/reports/jacoco/jacocoDebugReport/jacocoDebugReport.xml
 
       - name: Jacoco Report to PR
         id: jacoco
@@ -50,11 +49,6 @@ jobs:
           min-coverage-overall: 80
           min-coverage-changed-files: 60
           title: Code Coverage
-          update-comment: true
-          comment-type: 'both'
-          pass-emoji: ':green_circle:'
-          fail-emoji: ':red_circle:'
-          continue-on-error: false
           debug-mode: true
 
       - name: Get the Coverage info

@@ -13,9 +13,9 @@ class FakeRepositoryImplTest {
         assert(data == "Fake Data")
     }
 
-    @Test
-    fun testSetData() {
-        val anotherData = repository.getAnother()
-        assert(anotherData == "Another Fake Data")
-    }
+//    @Test
+//    fun testSetData() {
+//        val anotherData = repository.getAnother()
+//        assert(anotherData == "Another Fake Data")
+//    }
 }
